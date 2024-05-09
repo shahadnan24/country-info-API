@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Country Info Search</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="main">
+    <h1>Find Country Info</h1>
+    <form id="country-form">
+      <label for="country-name">Enter Country Name: </label>
+      <input type="text" id="country-name" name="country-name" placeholder="e.g., France">
+      <button type="submit">Search</button>
+    </form>
+    <div id="country-info"></div>
+  </div>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    const form = document.getElementById('country-form');
+    const countryInfoDiv = document.getElementById('country-info');
+
+    form.addEventListener('submit', function(event) {
+      // Prevent default form submission behavior
+      event.preventDefault();
+
+      // Get the country name from the input field
+      const countryName = document.getElementById('country-name').value;
+
+      // Make the API call with Axios
+      axios.get(`https://restcountries.com/v3.1/name/${countryName}`)
+        .then(function (response) {
+          // Handle success
+          let theData = response.data[0];  // Assuming only one country matches
+          if (theData) {
+            const html = `
+              <div>
+                <h1>${theData.name.common}</h1>
+                <img src="${theData.flags.png}" alt="">
+                <p>Capital: ${theData.capital}</p>
+                <p>Population: ${theData.population.toLocaleString()}</p>  </div>
+            `;
+            countryInfoDiv.innerHTML = html;
+          } else {
+            countryInfoDiv.innerHTML = "<p>Country not found.</p>";
+          }
+        })
+        .catch(function (error) {
+          // Handle error
+          console.log(error);
+          countryInfoDiv.innerHTML = "<p>An error occurred. Please try again.</p>";
+        });
+    });
+  </script>
+</body>
+</html>
